@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopBoost — Panel de configuración</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; font-size: 14px; }
+  .topbar { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .logo { background: #1a1a1a; color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 4px; }
+  .store-label { font-size: 13px; color: #888; }
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+  .toggle-label { font-size: 13px; color: #666; }
+  .toggle { width: 38px; height: 22px; background: #22c55e; border-radius: 999px; position: relative; cursor: pointer; border: none; transition: background 0.2s; }
+  .toggle.off { background: #ddd; }
+  .toggle::after { content:''; position:absolute; top:3px; left:3px; width:16px; height:16px; background:#fff; border-radius:50%; transition:left 0.2s; }
+  .toggle:not(.off)::after { left:19px; }
+  .toggle-status { font-size:12px; font-weight:600; color:#22c55e; min-width:48px; }
+  .toggle-status.off { color:#aaa; }
+  .layout { display: grid; grid-template-columns: 180px 1fr; min-height: calc(100vh - 53px); }
+  .sidebar { background: #fff; border-right: 1px solid #e5e5e5; padding: 16px 0; }
+  .nav-item { display:flex; align-items:center; gap:8px; padding:10px 16px; font-size:13px; color:#666; cursor:pointer; border-left:3px solid transparent; transition:all 0.15s; }
+  .nav-item:hover { background:#f5f5f5; color:#1a1a1a; }
+  .nav-item.active { background:#f5f5f5; color:#1a1a1a; font-weight:600; border-left-color:#1a1a1a; }
+  .content { padding: 24px; overflow-x: auto; }
+  .section { display:none; }
+  .section.active { display:block; }
+  .sec-title { font-size:17px; font-weight:600; margin:0 0 4px; }
+  .sec-sub { font-size:13px; color:#888; margin:0 0 20px; }
+  .tip { font-size:12px; color:#888; background:#f9f9f9; border:1px solid #eee; padding:10px 14px; border-radius:8px; margin-bottom:18px; line-height:1.6; }
+  .card { background:#fff; border:1px solid #e5e5e5; border-radius:12px; padding:18px; margin-bottom:14px; }
+  .cat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .cat-name-input { border:none; background:transparent; font-size:15px; font-weight:600; color:#1a1a1a; padding:2px 6px; border-radius:4px; font-family:inherit; }
+  .cat-name-input:focus { outline:none; background:#f5f5f5; border:1px solid #ddd; }
+  .btn-sm { font-size:11px; padding:5px 12px; border:1px solid #ddd; background:#fff; color:#666; border-radius:6px; cursor:pointer; transition:all 0.15s; font-family:inherit; }
+  .btn-sm.danger:hover { border-color:#fca5a5; color:#dc2626; background:#fef2f2; }
+  .tbl-wrap { overflow-x:auto; margin-bottom:10px; }
+  .size-tbl { border-collapse:collapse; font-size:12px; min-width:100%; }
+  .size-tbl th { padding:7px 8px; font-size:11px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:#999; border-bottom:1px solid #f0f0f0; text-align:center; white-space:nowrap; }
+  .size-tbl th:first-child { text-align:left; min-width:170px; }
+  .size-tbl td { padding:5px 4px; border-bottom:1px solid #f5f5f5; text-align:center; vertical-align:middle; }
+  .size-tbl tr:last-child td { border-bottom:none; }
+  .cell-input { border:1px solid transparent; background:transparent; padding:5px 7px; font-size:12px; color:#1a1a1a; border-radius:4px; width:80px; text-align:center; font-family:inherit; }
+  .cell-input:focus { outline:none; background:#f5f5f5; border-color:#ddd; }
+  .row-label-input { border:1px solid transparent; background:transparent; padding:5px 7px; font-size:12px; font-weight:500; color:#1a1a1a; border-radius:4px; width:180px; font-family:inherit; }
+  .row-label-input:focus { outline:none; background:#f5f5f5; border-color:#ddd; }
+  .talle-th-input { border:1px solid transparent; background:transparent; padding:4px 4px; font-size:11px; font-weight:600; color:#1a1a1a; border-radius:4px; width:70px; text-align:center; font-family:inherit; letter-spacing:0.06em; }
+  .talle-th-input:focus { outline:none; background:#f5f5f5; border-color:#ddd; }
+  .del-col-btn { display:block; margin:0 auto 2px; border:none; background:none; color:#ccc; cursor:pointer; font-size:14px; opacity:0; transition:opacity 0.15s; line-height:1; }
+  th:hover .del-col-btn { opacity:1; }
+  .del-col-btn:hover { color:#dc2626; }
+  .del-row-btn { border:none; background:none; color:#ccc; cursor:pointer; font-size:14px; opacity:0; padding:0 6px; }
+  tr:hover .del-row-btn { opacity:1; }
+  .del-row-btn:hover { color:#dc2626; }
+  .add-col-btn { font-size:11px; color:#aaa; border:1px dashed #ddd; background:transparent; cursor:pointer; padding:4px 10px; border-radius:4px; white-space:nowrap; transition:all 0.15s; font-family:inherit; }
+  .add-col-btn:hover { color:#1a1a1a; border-style:solid; background:#f5f5f5; }
+  .add-row-btn { font-size:12px; color:#aaa; border:none; background:none; cursor:pointer; padding:8px 0; display:flex; align-items:center; gap:4px; transition:color 0.15s; font-family:inherit; }
+  .add-row-btn:hover { color:#1a1a1a; }
+  .add-cat-btn { width:100%; padding:12px; border:1px dashed #ddd; background:transparent; color:#aaa; border-radius:12px; cursor:pointer; font-size:13px; transition:all 0.15s; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:6px; font-family:inherit; }
+  .add-cat-btn:hover { background:#f5f5f5; color:#1a1a1a; border-style:solid; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .field { display:flex; flex-direction:column; gap:6px; }
+  .field label { font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:#888; font-weight:500; }
+  .field input { border:1px solid #e5e5e5; background:#fff; padding:9px 12px; font-size:13px; color:#1a1a1a; border-radius:8px; font-family:inherit; }
+  .field input:focus { outline:none; border-color:#1a1a1a; }
+  .save-bar { background:#fff; border-top:1px solid #e5e5e5; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; bottom:0; }
+  .save-btn { padding:9px 24px; background:#1a1a1a; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:opacity 0.2s; font-family:inherit; }
+  .save-btn:hover { opacity:0.85; }
+  .saved-msg { font-size:12px; color:#22c55e; font-weight:600; display:none; }
+  .saved-msg.visible { display:inline; }
+  .loading { text-align:center; padding:60px; color:#aaa; font-size:14px; }
+  .pill { font-size:10px; padding:2px 8px; border-radius:999px; font-weight:600; }
+  .pill-green { background:#dcfce7; color:#15803d; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo">ShopBoost</span>
+    <span class="store-label" id="store-label">Cargando tienda...</span>
+  </div>
+  <div class="toggle-wrap">
+    <span class="toggle-label">Widget</span>
+    <button class="toggle" id="main-toggle" onclick="toggleWidget()"></button>
+    <span class="toggle-status" id="toggle-status">Activo</span>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="nav-item active" onclick="showSec('cats',this)">Categorías</div>
+    <div class="nav-item" onclick="showSec('textos',this)">Textos y botones</div>
+    <div class="nav-item" onclick="showSec('preview',this)">Vista previa</div>
+  </div>
+
+  <div class="content">
+    <div id="loading" class="loading">Cargando configuración...</div>
+
+    <div class="section" id="sec-cats">
+      <p class="sec-title">Categorías y talles</p>
+      <p class="sec-sub">Configurá las categorías, talles y medidas de tu tienda.</p>
+      <p class="tip">Los <strong>talles</strong> son las columnas — podés poner 85/90/95, S/M/L, 36/38/40, lo que uses. Las <strong>medidas</strong> son las filas — cada una tiene nombre editable. Hacé clic en cualquier celda para editar.</p>
+      <div id="cats-container"></div>
+      <button class="add-cat-btn" onclick="addCat()">+ Agregar categoría</button>
+    </div>
+
+    <div class="section" id="sec-textos">
+      <p class="sec-title">Textos y botones</p>
+      <p class="sec-sub">Personalizá los textos que ven los clientes en tu tienda.</p>
+      <div class="card">
+        <div class="field-row">
+          <div class="field"><label>Botón principal</label><input id="txt-btn1" placeholder="Encontrá tu talle"></div>
+          <div class="field"><label>Botón secundario</label><input id="txt-btn2" placeholder="Tabla de talles"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Título del modal</label><input id="txt-titulo" placeholder="Encontra tu talle"></div>
+          <div class="field"><label>Subtítulo</label><input id="txt-sub" placeholder="Ingresa tus medidas..."></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Botón calcular</label><input id="txt-calcular" placeholder="Calcular mi talle"></div>
+          <div class="field"><label>Botón cerrar tabla</label><input id="txt-cerrar" placeholder="Entendido"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-preview">
+      <p class="sec-title">Vista previa</p>
+      <p class="sec-sub">Así se ven los botones en la ficha de cada producto.</p>
+      <div style="background:#f5f5f5;border-radius:12px;padding:32px;text-align:center">
+        <p style="font-size:13px;color:#888;margin:0 0 16px">Ficha de producto</p>
+        <div style="display:inline-flex;gap:10px">
+          <div style="padding:13px 22px;background:#1a1a1a;color:#fff;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;border-radius:8px;display:flex;align-items:center;gap:7px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <span id="prev-btn1">Encontrá tu talle</span>
+          </div>
+          <div style="padding:13px 22px;border:1.5px solid #1a1a1a;color:#1a1a1a;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;border-radius:8px">
+            <span id="prev-btn2">Tabla de talles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="save-bar">
+  <span style="font-size:12px;color:#aaa">Los cambios se guardan para esta tienda</span>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="saved-msg" id="saved-msg">✓ Guardado</span>
+    <button class="save-btn" onclick="guardar()">Guardar cambios</button>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const storeId = params.get('store_id') || params.get('store') || 'demo';
+const API = '/api/config?store=' + storeId;
+let config = {};
+let widgetOn = true;
+let catCount = 0;
+
+document.getElementById('store-label').textContent = 'Tienda #' + storeId;
+
+async function loadConfig() {
+  try {
+    const r = await fetch(API);
+    config = await r.json();
+    renderAll();
+  } catch(e) {
+    config = getDefaultConfig();
+    renderAll();
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('sec-cats').classList.add('active');
+}
+
+function renderAll() {
+  widgetOn = config.active !== false;
+  updateToggle();
+  const t = config.textos || {};
+  document.getElementById('txt-btn1').value = t.btnPrincipal || '';
+  document.getElementById('txt-btn2').value = t.btnSecundario || '';
+  document.getElementById('txt-titulo').value = t.titulo || '';
+  document.getElementById('txt-sub').value = t.subtitulo || '';
+  document.getElementById('txt-calcular').value = t.btnCalcular || '';
+  document.getElementById('txt-cerrar').value = t.btnCerrar || '';
+  document.getElementById('prev-btn1').textContent = t.btnPrincipal || 'Encontrá tu talle';
+  document.getElementById('prev-btn2').textContent = t.btnSecundario || 'Tabla de talles';
+  const container = document.getElementById('cats-container');
+  container.innerHTML = '';
+  (config.categorias || []).forEach(cat => renderCat(cat));
+}
+
+function renderCat(cat) {
+  const id = 'cat-' + (++catCount);
+  const tblId = 'tbl-' + catCount;
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.catId = cat.id || id;
+
+  let thCols = (cat.talles || []).map(t =>
+    `<th><button class="del-col-btn" onclick="delCol(this)">×</button><input class="talle-th-input" value="${t}"></th>`
+  ).join('');
+
+  let rows = (cat.medidas || []).map(m => {
+    let cells = (m.valores || []).map(v => `<td><input class="cell-input" value="${v}"></td>`).join('');
+    return `<tr><td><input class="row-label-input" value="${m.nombre}"></td>${cells}<td><button class="del-row-btn" onclick="this.closest('tr').remove()">×</button></td></tr>`;
+  }).join('');
+
+  card.innerHTML = `
+    <div class="cat-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <input class="cat-name-input" value="${cat.nombre || ''}">
+        <span class="pill pill-green">Activa</span>
+      </div>
+      <button class="btn-sm danger" onclick="this.closest('.card').remove()">Eliminar</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="size-tbl" id="${tblId}">
+        <thead><tr>
+          <th style="text-align:left">Medida</th>
+          ${thCols}
+          <th style="padding:0 6px"><button class="add-col-btn" onclick="addCol('${tblId}')">+ Talle</button></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" onclick="addRow('${tblId}')">+ Agregar medida</button>`;
+  document.getElementById('cats-container').appendChild(card);
+}
+
+function addCol(tblId) {
+  const tbl = document.getElementById(tblId);
+  const thead = tbl.querySelector('thead tr');
+  const addBtn = thead.lastElementChild;
+  const th = document.createElement('th');
+  th.innerHTML = `<button class="del-col-btn" onclick="delCol(this)">×</button><input class="talle-th-input" placeholder="Talle">`;
+  thead.insertBefore(th, addBtn);
+  tbl.querySelectorAll('tbody tr').forEach(tr => {
+    const del = tr.lastElementChild;
+    tr.insertBefore(Object.assign(document.createElement('td'), { innerHTML: `<input class="cell-input" placeholder="—">` }), del);
+  });
+  th.querySelector('input').focus();
+}
+
+function delCol(btn) {
+  const th = btn.closest('th');
+  const tbl = btn.closest('table');
+  const idx = Array.from(th.parentElement.children).indexOf(th);
+  th.remove();
+  tbl.querySelectorAll('tbody tr').forEach(tr => { const td = tr.children[idx]; if(td) td.remove(); });
+}
+
+function addRow(tblId) {
+  const tbl = document.getElementById(tblId);
+  const cols = tbl.querySelectorAll('thead th:not(:first-child):not(:last-child)').length;
+  const tr = document.createElement('tr');
+  let h = `<td><input class="row-label-input" placeholder="Nombre de la medida"></td>`;
+  for(let i = 0; i < cols; i++) h += `<td><input class="cell-input" placeholder="—"></td>`;
+  h += `<td><button class="del-row-btn" onclick="this.closest('tr').remove()">×</button></td>`;
+  tr.innerHTML = h;
+  tbl.querySelector('tbody').appendChild(tr);
+  tr.querySelector('input').focus();
+}
+
+function addCat() {
+  const fakeCat = { id: 'nueva-' + Date.now(), nombre: '', talles: ['S', 'M', 'L'], medidas: [{ nombre: '', valores: ['', '', ''] }] };
+  renderCat(fakeCat);
+  const cards = document.querySelectorAll('#cats-container .card');
+  cards[cards.length - 1].querySelector('.cat-name-input').focus();
+}
+
+function showSec(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+function updateToggle() {
+  document.getElementById('main-toggle').classList.toggle('off', !widgetOn);
+  const s = document.getElementById('toggle-status');
+  s.textContent = widgetOn ? 'Activo' : 'Inactivo';
+  s.classList.toggle('off', !widgetOn);
+}
+
+function toggleWidget() {
+  widgetOn = !widgetOn;
+  updateToggle();
+}
+
+function recolectarConfig() {
+  const categorias = [];
+  document.querySelectorAll('#cats-container .card').forEach(card => {
+    const nombre = card.querySelector('.cat-name-input').value;
+    const tbl = card.querySelector('.size-tbl');
+    const talles = Array.from(tbl.querySelectorAll('thead th:not(:first-child):not(:last-child) .talle-th-input')).map(i => i.value);
+    const medidas = Array.from(tbl.querySelectorAll('tbody tr')).map(tr => {
+      const label = tr.querySelector('.row-label-input').value;
+      const valores = Array.from(tr.querySelectorAll('.cell-input')).map(i => i.value);
+      return { nombre: label, valores };
+    });
+    categorias.push({ id: card.dataset.catId || nombre, nombre, talles, medidas });
+  });
+  return {
+    active: widgetOn,
+    textos: {
+      btnPrincipal: document.getElementById('txt-btn1').value,
+      btnSecundario: document.getElementById('txt-btn2').value,
+      titulo: document.getElementById('txt-titulo').value,
+      subtitulo: document.getElementById('txt-sub').value,
+      btnCalcular: document.getElementById('txt-calcular').value,
+      btnCerrar: document.getElementById('txt-cerrar').value,
+    },
+    categorias
+  };
+}
+
+async function guardar() {
+  const data = recolectarConfig();
+  document.getElementById('prev-btn1').textContent = data.textos.btnPrincipal;
+  document.getElementById('prev-btn2').textContent = data.textos.btnSecundario;
+  try {
+    await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  } catch(e) {}
+  const msg = document.getElementById('saved-msg');
+  msg.classList.add('visible');
+  setTimeout(() => msg.classList.remove('visible'), 2500);
+}
+
+function getDefaultConfig() {
+  return {
+    active: true,
+    textos: { btnPrincipal: "Encontrá tu talle", btnSecundario: "Tabla de talles", titulo: "Encontra tu talle", subtitulo: "Ingresa tus medidas y te decimos que talle elegir", btnCalcular: "Calcular mi talle", btnCerrar: "Entendido" },
+    categorias: [
+      { id: "calzas", nombre: "Calzas", talles: ["XS","S","M","L","XL"], medidas: [{ nombre: "Cintura (cm)", valores: ["60–64","65–69","70–75","76–82","83–90"] }, { nombre: "Cadera (cm)", valores: ["86–90","91–95","96–101","102–108","109–116"] }] },
+      { id: "remeras", nombre: "Remeras / Tops", talles: ["S / 38","M / 40","L / 42","XL / 44"], medidas: [{ nombre: "Busto (cm)", valores: ["83–87","88–92","93–97","98–103"] }, { nombre: "Cintura (cm)", valores: ["67–71","72–76","77–81","82–87"] }] }
+    ]
+  };
+}
+
+loadConfig();
+</script>
+</body>
+</html>
