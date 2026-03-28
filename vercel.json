@@ -1,16 +1,7 @@
 {
-  "version": 2,
   "rewrites": [
-    { "source": "/shopboost.js", "destination": "/public/shopboost.js" },
-    { "source": "/api/:path*", "destination": "/api/:path*" }
-  ],
-  "headers": [
-    {
-      "source": "/shopboost.js",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Content-Type", "value": "application/javascript" }
-      ]
-    }
+    { "source": "/api/config", "destination": "/api/config.js" },
+    { "source": "/admin", "destination": "/public/admin/index.html" },
+    { "source": "/admin/", "destination": "/public/admin/index.html" }
   ]
 }
