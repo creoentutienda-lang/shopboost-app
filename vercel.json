@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/shopboost.js", "dest": "/public/shopboost.js" },
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/public/index.html" }
+  "rewrites": [
+    { "source": "/shopboost.js", "destination": "/public/shopboost.js" },
+    { "source": "/api/:path*", "destination": "/api/:path*" }
   ],
   "headers": [
     {
