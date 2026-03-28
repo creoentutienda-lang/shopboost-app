@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopBoost — Mejoras para tu Tiendanube</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #FAFAF8; color: #111; }
+  .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px; }
+  .logo { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .logo span { color: #5865f2; }
+  h1 { font-size: clamp(28px, 5vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 20px; max-width: 600px; }
+  p { font-size: 18px; color: #666; max-width: 480px; line-height: 1.6; margin-bottom: 36px; }
+  .badge { display: inline-block; background: #e8f5e9; color: #2a6a2a; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 24px; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; max-width: 700px; width: 100%; margin-bottom: 40px; }
+  .feature { background: #fff; border: 1px solid #e8e6df; border-radius: 12px; padding: 20px; text-align: left; }
+  .feature-icon { font-size: 24px; margin-bottom: 10px; }
+  .feature-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .feature-desc { font-size: 13px; color: #888; line-height: 1.4; }
+  .installed-msg { background: #e8f5e9; border: 1px solid #b8dfb8; border-radius: 12px; padding: 20px 28px; font-size: 16px; color: #2a6a2a; font-weight: 600; display: none; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="logo">Shop<span>Boost</span></div>
+  <span class="badge">✓ Certificado para Tiendanube</span>
+  <h1>Convertí más visitas en ventas</h1>
+  <p>ShopBoost agrega calculadora de talles inteligente y mucho más a tu tienda, sin tocar el código.</p>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">👗</div>
+      <div class="feature-name">Calculadora de talles</div>
+      <div class="feature-desc">El cliente pone sus medidas y la app le dice qué talle llevar.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📐</div>
+      <div class="feature-name">Tabla de medidas</div>
+      <div class="feature-desc">Tabla visual con todas las medidas por talle.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-name">Instalación en 1 clic</div>
+      <div class="feature-desc">Se activa automáticamente sin tocar el código de la tienda.</div>
+    </div>
+  </div>
+  <div class="installed-msg" id="msg-instalado">✓ ShopBoost instalado con éxito en tu tienda</div>
+</div>
+<script>
+  if (new URLSearchParams(location.search).get('instalado') === 'true') {
+    document.getElementById('msg-instalado').style.display = 'block';
+  }
+</script>
+</body>
+</html>

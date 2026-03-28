@@ -1,0 +1,8 @@
+{
+  "name": "shopboost-app",
+  "version": "1.0.0",
+  "description": "App de mejoras para tiendas Tiendanube",
+  "engines": {
+    "node": "18.x"
+  }
+}
