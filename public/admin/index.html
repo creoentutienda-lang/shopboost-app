@@ -11,6 +11,10 @@
   .topbar-left { display: flex; align-items: center; gap: 10px; }
   .logo { background: #1a1a1a; color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 4px; }
   .store-label { font-size: 13px; color: #888; }
+  .jt-brand { display:flex; align-items:center; gap:10px; border-left:1px solid #eee; padding-left:12px; }
+  .jt-logo { height:30px; width:30px; border-radius:50%; object-fit:cover; border:1px solid #eee; background:#eae6e0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#2d3a52; overflow:hidden; }
+  .tiktok-link { display:flex; align-items:center; gap:5px; font-size:11px; color:#aaa; text-decoration:none; transition:color 0.15s; }
+  .tiktok-link:hover { color:#1a1a1a; }
   .toggle-wrap { display: flex; align-items: center; gap: 8px; }
   .toggle-label { font-size: 13px; color: #666; }
   .toggle { width: 38px; height: 22px; background: #22c55e; border-radius: 999px; position: relative; cursor: pointer; border: none; transition: background 0.2s; }
@@ -81,6 +85,13 @@
   <div class="topbar-left">
     <span class="logo">ShopBoost</span>
     <span class="store-label" id="store-label">Cargando tienda...</span>
+  </div>
+  <div class="jt-brand">
+    <div class="jt-logo"><img src="/logo.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentElement.innerHTML='JT'"></div>
+    <a class="tiktok-link" href="https://www.tiktok.com/@julieta_tiendasonline" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+      @julieta_tiendasonline
+    </a>
   </div>
   <div class="toggle-wrap">
     <span class="toggle-label">Widget</span>
