@@ -4,5 +4,8 @@
   "description": "App de mejoras para tiendas Tiendanube",
   "engines": {
     "node": "20.x"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.9"
   }
 }

@@ -1,8 +1,8 @@
 const { Redis } = require('@upstash/redis');
 const kv = Redis.fromEnv();
 
-// Webhook de privacidad requerido por Tiendanube.
-// Se llama cuando una tienda solicita la eliminación de sus datos.
+// Webhook de desinstalación requerido por Tiendanube.
+// Se llama cuando una tienda desinstala la app.
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -13,16 +13,16 @@ module.exports = async (req, res) => {
 
   const storeId = body?.store_id || body?.user_id;
   if (!storeId) {
-    console.error('Privacy webhook sin store_id:', body);
+    console.error('Uninstall webhook sin store_id:', body);
     return res.status(400).json({ error: 'Falta store_id' });
   }
 
   try {
     await kv.del(`config:${storeId}`);
-    console.log(`Datos eliminados para tienda: ${storeId}`);
+    console.log(`App desinstalada para tienda: ${storeId}`);
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('Error eliminando datos de tienda:', storeId, err);
-    return res.status(500).json({ error: 'Error al eliminar datos' });
+    console.error('Error en desinstalación para tienda:', storeId, err);
+    return res.status(500).json({ error: 'Error al procesar desinstalación' });
   }
 };
