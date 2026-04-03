@@ -165,19 +165,34 @@
 
   function buildTablaHtml(cats) {
     if (!cats || cats.length === 0) return '';
-    // Mostrar primera categoría en la tabla (la más completa)
-    var cat = cats[0];
-    var talles = cat.talles || [];
-    var medidas = cat.medidas || [];
-    var thead = '<thead><tr><th>Talle</th>' +
-      medidas.map(function (m) { return '<th>' + esc(m.nombre) + '</th>'; }).join('') +
-      '</tr></thead>';
-    var tbody = '<tbody>' + talles.map(function (talle, ti) {
-      return '<tr><td><strong>' + esc(talle) + '</strong></td>' +
-        medidas.map(function (m) { return '<td>' + esc((m.valores || [])[ti] || '') + '</td>'; }).join('') +
-        '</tr>';
-    }).join('') + '</tbody>';
-    return '<table class="sb-tabla">' + thead + tbody + '</table>';
+
+    var tabs = cats.length > 1
+      ? '<div class="sb-tabs" style="margin-bottom:14px">' +
+          cats.map(function (cat, idx) {
+            var cls = 'sb-tab' + (idx === 0 ? ' sb-active' : '');
+            return '<button class="' + cls + '" onclick="window.SB.setTabla(' + idx + ',this)">' + esc(cat.nombre) + '</button>';
+          }).join('') +
+        '</div>'
+      : '';
+
+    var tablas = cats.map(function (cat, idx) {
+      var talles = cat.talles || [];
+      var medidas = cat.medidas || [];
+      var thead = '<thead><tr><th>Talle</th>' +
+        medidas.map(function (m) { return '<th>' + esc(m.nombre) + '</th>'; }).join('') +
+        '</tr></thead>';
+      var tbody = '<tbody>' + talles.map(function (talle, ti) {
+        return '<tr><td><strong>' + esc(talle) + '</strong></td>' +
+          medidas.map(function (m) { return '<td>' + esc((m.valores || [])[ti] || '') + '</td>'; }).join('') +
+          '</tr>';
+      }).join('') + '</tbody>';
+      var display = idx === 0 ? '' : ' style="display:none"';
+      return '<div class="sb-tabla-panel" data-tabla-idx="' + idx + '"' + display + '>' +
+        '<table class="sb-tabla">' + thead + tbody + '</table>' +
+        '</div>';
+    }).join('');
+
+    return tabs + tablas;
   }
 
   function insertModals() {
@@ -246,6 +261,13 @@
     openModal: function (id) { document.getElementById(id) && document.getElementById(id).classList.add('sb-open'); document.body.style.overflow = 'hidden'; },
     closeModal: function (id) { document.getElementById(id) && document.getElementById(id).classList.remove('sb-open'); document.body.style.overflow = ''; },
     closeOutside: function (e, id) { if (e.target.id === id) this.closeModal(id); },
+    setTabla: function (idx, btn) {
+      document.querySelectorAll('.sb-tabla-panel').forEach(function (p) { p.style.display = 'none'; });
+      var panel = document.querySelector('.sb-tabla-panel[data-tabla-idx="' + idx + '"]');
+      if (panel) panel.style.display = '';
+      document.querySelectorAll('#sb-tabla .sb-tab').forEach(function (t) { t.classList.remove('sb-active'); });
+      btn.classList.add('sb-active');
+    },
     setCategoria: function (idx, btn) {
       this.catIdx = idx;
       document.querySelectorAll('.sb-tab').forEach(function (t) { t.classList.remove('sb-active'); });

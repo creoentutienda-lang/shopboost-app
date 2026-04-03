@@ -334,11 +334,14 @@ async function guardar() {
   document.getElementById('prev-btn1').textContent = data.textos.btnPrincipal;
   document.getElementById('prev-btn2').textContent = data.textos.btnSecundario;
   try {
-    await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-  } catch(e) {}
-  const msg = document.getElementById('saved-msg');
-  msg.classList.add('visible');
-  setTimeout(() => msg.classList.remove('visible'), 2500);
+    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    if (!r.ok) throw new Error('Error al guardar');
+    const msg = document.getElementById('saved-msg');
+    msg.classList.add('visible');
+    setTimeout(() => msg.classList.remove('visible'), 2500);
+  } catch(e) {
+    alert('No se pudo guardar la configuración. Revisá tu conexión e intentá de nuevo.');
+  }
 }
 
 function getDefaultConfig() {
