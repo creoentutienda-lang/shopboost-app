@@ -4,6 +4,7 @@
     { "source": "/api/config",    "destination": "/api/config.js" },
     { "source": "/api/privacy",   "destination": "/api/privacy.js" },
     { "source": "/api/uninstall", "destination": "/api/uninstall.js" },
+    { "source": "/shopboost.js",  "destination": "/public/shopboost.js" },
     { "source": "/admin",         "destination": "/public/admin/index.html" },
     { "source": "/admin/",        "destination": "/public/admin/index.html" },
     { "source": "/",              "destination": "/public/index.html" }

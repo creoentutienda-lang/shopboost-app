@@ -22,7 +22,6 @@ function validateConfig(body) {
 
 module.exports = async (req, res) => {
   const origin = req.headers.origin || '';
-  const appUrl = process.env.APP_URL || '';
 
   // CORS: GET permitido desde tiendas Tiendanube; POST solo desde el mismo dominio (admin)
   if (req.method === 'OPTIONS') {

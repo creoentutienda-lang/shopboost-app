@@ -28,7 +28,8 @@ module.exports = async (req, res) => {
     }
 
     // El script se instala automáticamente via Tiendanube (instalación automática activada en Partners)
-    return res.redirect(`${process.env.APP_URL}/admin?store_id=${user_id}`);
+    const appUrl = process.env.APP_URL || 'https://shopboost-app-clvz.vercel.app';
+    return res.redirect(`${appUrl}/admin?store_id=${user_id}`);
   } catch (error) {
     console.error('Auth error:', error);
     return res.status(500).send('Error al instalar ShopBoost. Por favor intenta de nuevo.');
