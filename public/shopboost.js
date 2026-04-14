@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  // Obtener store_id desde la URL del script (?store=12345)
+  // Obtener store_id desde la URL del script (?store=12345) o desde el contexto de Tiendanube
   var scriptEl = document.currentScript ||
     (function () {
       var scripts = document.getElementsByTagName('script');
@@ -13,8 +13,17 @@
     storeId = new URL(scriptSrc).searchParams.get('store');
   } catch (e) {}
 
+  // Fallback: detectar store_id desde el contexto global de Tiendanube
+  if (!storeId) {
+    try {
+      storeId = (window.LS && window.LS.store && window.LS.store.id)
+        ? String(window.LS.store.id)
+        : null;
+    } catch (e) {}
+  }
+
   var config = null;
-  var APP_URL = scriptSrc ? scriptSrc.split('/shopboost.js')[0] : '';
+  var APP_URL = scriptSrc ? scriptSrc.split('/shopboost.js')[0] : 'https://shopboost-app-clvz.vercel.app';
 
   function loadConfig(cb) {
     if (!storeId) { cb(getDefaultConfig()); return; }

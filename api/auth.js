@@ -27,24 +27,7 @@ module.exports = async (req, res) => {
       return res.status(500).send('Error al conectar con Tiendanube. Respuesta inesperada.');
     }
 
-    const scriptRes = await fetch(`https://api.tiendanube.com/v1/${user_id}/scripts`, {
-      method: 'POST',
-      headers: {
-        'Authentication': `bearer ${access_token}`,
-        'User-Agent': 'ShopBoost/1.0',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        script_id: 5611
-      })
-    });
-
-    if (!scriptRes.ok) {
-      const errBody = await scriptRes.text();
-      console.error('Script injection error:', scriptRes.status, errBody);
-      return res.status(500).send('Error al instalar el widget en la tienda. Por favor intenta de nuevo.');
-    }
-
+    // El script se instala automáticamente via Tiendanube (instalación automática activada en Partners)
     return res.redirect(`${process.env.APP_URL}/admin?store_id=${user_id}`);
   } catch (error) {
     console.error('Auth error:', error);
