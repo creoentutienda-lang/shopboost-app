@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        script_id: parseInt(process.env.SCRIPT_ID)
+        script_id: 5611
       })
     });
 
