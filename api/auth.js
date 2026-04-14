@@ -35,9 +35,7 @@ module.exports = async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        src: `${process.env.APP_URL}/shopboost.js?store=${user_id}`,
-        event: 'onload',
-        where: 'store'
+        script_id: parseInt(process.env.SCRIPT_ID)
       })
     });
 
