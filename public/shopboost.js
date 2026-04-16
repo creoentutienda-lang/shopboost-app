@@ -24,6 +24,16 @@
 
   var config = null;
   var APP_URL = scriptSrc ? scriptSrc.split('/shopboost.js')[0] : 'https://shopboost-app-clvz.vercel.app';
+  var _insertAttempts = 0;
+
+  var ANCHOR_TARGETS = [
+    '.js-product-form', '[data-buy-form]', '.product__buy', '.product__actions',
+    '.product-variants', '.js-product-variants', '.product-form__variants',
+    '[data-store="product-variants"]',
+    '.add-to-cart-button', '.js-add-to-cart', '#buy-button', '.buy-button',
+    'form[action*="cart"]', 'form[action*="carrito"]', 'form[action*="carrinho"]',
+    '.product-description', '.product-info', '.product-details'
+  ];
 
   function loadConfig(cb) {
     if (!storeId) { cb(getDefaultConfig()); return; }
@@ -135,29 +145,18 @@
   }
 
   function insertTalleButtons() {
-    // Solo actuar en páginas de producto (Tiendanube expone window.LS.product en esas páginas)
-    var isProductPage = window.LS && window.LS.product;
-    if (!isProductPage) return;
+    // window.LS.product solo existe en páginas de producto
+    if (!(window.LS && window.LS.product)) return;
 
-    var targets = [
-      // Tiendanube — temas modernos
-      '.js-product-form', '[data-buy-form]', '.product__buy', '.product__actions',
-      // Tiendanube — temas clásicos
-      '.product-variants', '.js-product-variants', '.product-form__variants',
-      '[data-store="product-variants"]',
-      // Botones de compra genéricos
-      '.add-to-cart-button', '.js-add-to-cart', '#buy-button', '.buy-button',
-      // Formulario de carrito
-      'form[action*="cart"]', 'form[action*="carrito"]', 'form[action*="carrinho"]',
-      // Fallback amplio: descripción del producto
-      '.product-description', '.product-info', '.product-details'
-    ];
     var anchor = null;
-    for (var i = 0; i < targets.length; i++) {
-      anchor = document.querySelector(targets[i]);
+    for (var i = 0; i < ANCHOR_TARGETS.length; i++) {
+      anchor = document.querySelector(ANCHOR_TARGETS[i]);
       if (anchor) break;
     }
-    if (!anchor) { setTimeout(insertTalleButtons, 2000); return; }
+    if (!anchor) {
+      if (++_insertAttempts < 5) setTimeout(insertTalleButtons, 2000);
+      return;
+    }
     if (document.getElementById('sb-talle-wrap')) return;
 
     var t = config.textos || {};
@@ -363,7 +362,8 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;');
   }
 
 })();
