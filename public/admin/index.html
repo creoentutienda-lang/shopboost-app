@@ -165,6 +165,10 @@
 </div>
 
 <script>
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
+
 const params = new URLSearchParams(window.location.search);
 const storeId = params.get('store_id') || params.get('store') || 'demo';
 const API = '/api/config?store=' + storeId;
@@ -177,6 +181,7 @@ document.getElementById('store-label').textContent = 'Tienda #' + storeId;
 async function loadConfig() {
   try {
     const r = await fetch(API);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     config = await r.json();
     renderAll();
   } catch(e) {
@@ -212,18 +217,18 @@ function renderCat(cat) {
   card.dataset.catId = cat.id || id;
 
   let thCols = (cat.talles || []).map(t =>
-    `<th><button class="del-col-btn" onclick="delCol(this)">×</button><input class="talle-th-input" value="${t}"></th>`
+    `<th><button class="del-col-btn" onclick="delCol(this)">×</button><input class="talle-th-input" value="${esc(t)}"></th>`
   ).join('');
 
   let rows = (cat.medidas || []).map(m => {
-    let cells = (m.valores || []).map(v => `<td><input class="cell-input" value="${v}"></td>`).join('');
-    return `<tr><td><input class="row-label-input" value="${m.nombre}"></td>${cells}<td><button class="del-row-btn" onclick="this.closest('tr').remove()">×</button></td></tr>`;
+    let cells = (m.valores || []).map(v => `<td><input class="cell-input" value="${esc(v)}"></td>`).join('');
+    return `<tr><td><input class="row-label-input" value="${esc(m.nombre)}"></td>${cells}<td><button class="del-row-btn" onclick="this.closest('tr').remove()">×</button></td></tr>`;
   }).join('');
 
   card.innerHTML = `
     <div class="cat-header">
       <div style="display:flex;align-items:center;gap:8px">
-        <input class="cat-name-input" value="${cat.nombre || ''}">
+        <input class="cat-name-input" value="${esc(cat.nombre || '')}">
         <span class="pill pill-green">Activa</span>
       </div>
       <button class="btn-sm danger" onclick="this.closest('.card').remove()">Eliminar</button>

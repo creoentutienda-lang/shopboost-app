@@ -28,7 +28,7 @@
   function loadConfig(cb) {
     if (!storeId) { cb(getDefaultConfig()); return; }
     fetch(APP_URL + '/api/config?store=' + storeId)
-      .then(function (r) { return r.json(); })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (data) { cb(data); })
       .catch(function () { cb(getDefaultConfig()); });
   }
