@@ -135,10 +135,22 @@
   }
 
   function insertTalleButtons() {
+    // Solo actuar en páginas de producto (Tiendanube expone window.LS.product en esas páginas)
+    var isProductPage = window.LS && window.LS.product;
+    if (!isProductPage) return;
+
     var targets = [
+      // Tiendanube — temas modernos
+      '.js-product-form', '[data-buy-form]', '.product__buy', '.product__actions',
+      // Tiendanube — temas clásicos
       '.product-variants', '.js-product-variants', '.product-form__variants',
-      '[data-store="product-variants"]', '.add-to-cart-button', '.js-add-to-cart',
-      'form[action*="cart"]'
+      '[data-store="product-variants"]',
+      // Botones de compra genéricos
+      '.add-to-cart-button', '.js-add-to-cart', '#buy-button', '.buy-button',
+      // Formulario de carrito
+      'form[action*="cart"]', 'form[action*="carrito"]', 'form[action*="carrinho"]',
+      // Fallback amplio: descripción del producto
+      '.product-description', '.product-info', '.product-details'
     ];
     var anchor = null;
     for (var i = 0; i < targets.length; i++) {
